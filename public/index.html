@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juweeltjes Lies - Modern Jewelry Store</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a1a1a;
+            --secondary: #f5f5f5;
+            --accent: #d4af37;
+            --text-light: #666;
+            --border: #e5e5e5;
+            --shadow: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-hover: 0 4px 16px rgba(0,0,0,0.12);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: var(--primary);
+            line-height: 1.6;
+            background: #fff;
+        }
+
+        /* Header Styles */
+        .header {
+            position: sticky;
+            top: 0;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            position: relative;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            width: 40px;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translateY(6px);
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translateY(-6px);
+        }
+
+        .logo {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .cart-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            position: relative;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        /* Side Menu */
+        .side-menu {
+            position: fixed;
+            left: -300px;
+            top: 0;
+            width: 300px;
+            height: 100vh;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            transition: left 0.3s ease;
+            z-index: 200;
+        }
+
+        .side-menu.active {
+            left: 0;
+        }
+
+        .menu-header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .menu-nav {
+            padding: 2rem;
+        }
+
+        .menu-nav a {
+            display: block;
+            padding: 1rem 0;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        .menu-nav a:hover {
+            color: var(--accent);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 150;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Product Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .product-card {
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .product-image {
+            width: 100%;
+            aspect-ratio: 1;
+            background: var(--secondary);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 1rem 0;
+        }
+
+        .product-name {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 400;
+        }
+
+        .product-price {
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        /* Product Detail Page */
+        .product-detail {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .product-detail.active {
+            display: block;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .back-button:hover {
+            color: var(--primary);
+        }
+
+        .detail-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .detail-image {
+            width: 100%;
+            aspect-ratio: 1;
+            background: var(--secondary);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .detail-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .detail-info {
+            padding: 2rem 0;
+        }
+
+        .detail-title {
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .detail-price {
+            font-size: 1.5rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+
+        .detail-description {
+            color: var(--text-light);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .add-to-cart {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .add-to-cart:hover {
+            background: #333;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Cart Page */
+        .cart-page {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .cart-page.active {
+            display: block;
+        }
+
+        .cart-title {
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            letter-spacing: 1px;
+        }
+
+        .cart-items {
+            margin-bottom: 2rem;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 2rem;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .cart-item-image {
+            width: 100px;
+            height: 100px;
+            background: var(--secondary);
+            border-radius: 8px;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .cart-item-price {
+            color: var(--text-light);
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .quantity-btn {
+            background: var(--secondary);
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .quantity-btn:hover {
+            background: var(--border);
+        }
+
+        .remove-item {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .cart-total {
+            text-align: right;
+            padding: 2rem;
+            background: var(--secondary);
+            border-radius: 8px;
+        }
+
+        .total-label {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .total-amount {
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+        }
+
+        .checkout-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .checkout-btn:hover {
+            background: #b8941f;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-light);
+        }
+
+        /* Simple Pages */
+        .page-content {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            letter-spacing: 1px;
+        }
+
+        .page-text {
+            color: var(--text-light);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .detail-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 1rem;
+            }
+
+            .header-content {
+                padding: 1rem;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <button class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="logo">Juweeltjes Lies</div>
+            <button class="cart-icon" id="cartBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 2L6 9H3L5 2H9Z"/>
+                    <path d="M15 2L18 9H21L19 2H15Z"/>
+                    <path d="M3 9H21L20 20H4L3 9Z"/>
+                </svg>
+                <span class="cart-count" id="cartCount">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Side Menu -->
+    <div class="side-menu" id="sideMenu">
+        <div class="menu-header">
+            <h3>Menu</h3>
+        </div>
+        <nav class="menu-nav">
+            <a href="#" data-page="about">About Me</a>
+            <a href="#" data-page="contact">Contact Me</a>
+        </nav>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Product Grid (Main Page) -->
+        <div id="mainPage" class="product-grid">
+            <!-- Products will be dynamically added here -->
+        </div>
+
+        <!-- Product Detail Page -->
+        <div id="productDetail" class="product-detail">
+            <!-- Detail content will be dynamically added here -->
+        </div>
+
+        <!-- Cart Page -->
+        <div id="cartPage" class="cart-page">
+            <h2 class="cart-title">Shopping Cart</h2>
+            <div id="cartContent">
+                <!-- Cart items will be dynamically added here -->
+            </div>
+        </div>
+
+        <!-- About Page -->
+        <div id="aboutPage" class="page-content">
+            <h1 class="page-title">About Me</h1>
+            <p class="page-text">
+                Welcome to Juweeltjes Lies! I'm Lies, a passionate jewelry designer dedicated to creating unique, 
+                handcrafted pieces that tell a story. Each piece in my collection is carefully crafted with love 
+                and attention to detail.
+            </p>
+            <p class="page-text">
+                My journey in jewelry making began over a decade ago, inspired by the beauty of natural materials 
+                and the joy of creating something special for each customer. I believe that jewelry should be more 
+                than just an accessory – it should be a personal expression of who you are.
+            </p>
+            <p class="page-text">
+                Thank you for visiting my shop. I hope you find something that speaks to you!
+            </p>
+        </div>
+
+        <!-- Contact Page -->
+        <div id="contactPage" class="page-content">
+            <h1 class="page-title">Contact Me</h1>
+            <p class="page-text">
+                I'd love to hear from you! Whether you have questions about a piece, want to discuss a custom order, 
+                or just want to say hello, feel free to reach out.
+            </p>
+            <p class="page-text">
+                <strong>Email:</strong> info@juweeltjeslies.site<br>
+                <strong>Phone:</strong> +32 123 456 789<br>
+                <strong>Instagram:</strong> @juweeltjeslies
+            </p>
+            <p class="page-text">
+                <strong>Workshop visits:</strong><br>
+                By appointment only<br>
+                Leuven, Belgium
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Sample product data
+        const products = [
+            { id: 1, name: 'Elegant Pearl Necklace', price: 189.99, description: 'A timeless piece featuring freshwater pearls on a delicate silver chain. Perfect for special occasions or adding elegance to your everyday look.' },
+            { id: 2, name: 'Rose Gold Ring', price: 249.99, description: 'Handcrafted rose gold ring with intricate detailing. A modern take on classic jewelry design that complements any style.' },
+            { id: 3, name: 'Diamond Stud Earrings', price: 399.99, description: 'Classic diamond studs set in white gold. These versatile earrings are perfect for both casual and formal occasions.' },
+            { id: 4, name: 'Vintage Brooch', price: 129.99, description: 'Art deco inspired brooch with colored gemstones. Add a touch of vintage glamour to any outfit.' },
+            { id: 5, name: 'Silver Charm Bracelet', price: 159.99, description: 'Customizable silver bracelet with unique charms. Create your own story with our selection of meaningful charms.' },
+            { id: 6, name: 'Amethyst Pendant', price: 179.99, description: 'Natural amethyst crystal pendant on a sterling silver chain. Known for its calming properties and stunning purple hue.' },
+            { id: 7, name: 'Gold Hoop Earrings', price: 199.99, description: 'Classic gold hoops with a modern twist. Lightweight and comfortable for all-day wear.' },
+            { id: 8, name: 'Sapphire Ring Set', price: 459.99, description: 'Stunning sapphire centerpiece surrounded by smaller diamonds. A perfect engagement or anniversary gift.' }
+        ];
+
+        // Shopping cart
+        let cart = [];
+
+        // Current page state
+        let currentPage = 'main';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCart();
+            renderProducts();
+            updateCartCount();
+            setupEventListeners();
+        });
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Menu toggle
+            document.getElementById('menuToggle').addEventListener('click', toggleMenu);
+            document.getElementById('overlay').addEventListener('click', closeMenu);
+
+            // Cart button
+            document.getElementById('cartBtn').addEventListener('click', showCart);
+
+            // Menu navigation
+            document.querySelectorAll('.menu-nav a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.dataset.page;
+                    showPage(page);
+                    closeMenu();
+                });
+            });
+        }
+
+        // Toggle menu
+        function toggleMenu() {
+            const menu = document.getElementById('sideMenu');
+            const overlay = document.getElementById('overlay');
+            const toggle = document.getElementById('menuToggle');
+            
+            menu.classList.toggle('active');
+            overlay.classList.toggle('active');
+            toggle.classList.toggle('active');
+        }
+
+        // Close menu
+        function closeMenu() {
+            const menu = document.getElementById('sideMenu');
+            const overlay = document.getElementById('overlay');
+            const toggle = document.getElementById('menuToggle');
+            
+            menu.classList.remove('active');
+            overlay.classList.remove('active');
+            toggle.classList.remove('active');
+        }
+
+        // Render products
+        function renderProducts() {
+            const grid = document.getElementById('mainPage');
+            grid.innerHTML = products.map(product => `
+                <div class="product-card" onclick="showProductDetail(${product.id})">
+                    <div class="product-image">
+                        <img src="https://via.placeholder.com/400x400/f5f5f5/666?text=${encodeURIComponent(product.name)}" alt="${product.name}">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">${product.name}</h3>
+                        <p class="product-price">€${product.price.toFixed(2)}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Show product detail
+        function showProductDetail(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            hideAllPages();
+            const detailPage = document.getElementById('productDetail');
+            detailPage.innerHTML = `
+                <a href="#" class="back-button" onclick="showMainPage(); return false;">
+                    ← Back to products
+                </a>
+                <div class="detail-content">
+                    <div class="detail-image">
+                        <img src="https://via.placeholder.com/600x600/f5f5f5/666?text=${encodeURIComponent(product.name)}" alt="${product.name}">
+                    </div>
+                    <div class="detail-info">
+                        <h1 class="detail-title">${product.name}</h1>
+                        <p class="detail-price">€${product.price.toFixed(2)}</p>
+                        <p class="detail-description">${product.description}</p>
+                        <button class="add-to-cart" onclick="addToCart(${product.id})">Add to Cart</button>
+                    </div>
+                </div>
+            `;
+            detailPage.classList.add('active');
+            currentPage = 'detail';
+        }
+
+        // Add to cart
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            const existingItem = cart.find(item => item.id === productId);
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+
+            saveCart();
+            updateCartCount();
+            
+            // Show feedback
+            const button = event.target;
+            button.textContent = 'Added!';
+            setTimeout(() => {
+                button.textContent = 'Add to Cart';
+            }, 1500);
+        }
+
+        // Show cart
+        function showCart() {
+            hideAllPages();
+            const cartPage = document.getElementById('cartPage');
+            renderCart();
+            cartPage.classList.add('active');
+            currentPage = 'cart';
+        }
+
+        // Render cart
+        function renderCart() {
+            const cartContent = document.getElementById('cartContent');
+            
+            if (cart.length === 0) {
+                cartContent.innerHTML = `
+                    <div class="empty-cart">
+                        <h3>Your cart is empty</h3>
+                        <p>Start shopping to add items to your cart!</p>
+                        <br>
+                        <button class="add-to-cart" onclick="showMainPage()">Continue Shopping</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            cartContent.innerHTML = `
+                <div class="cart-items">
+                    ${cart.map(item => `
+                        <div class="cart-item">
+                            <div class="cart-item-image">
+                                <img src="https://via.placeholder.com/100x100/f5f5f5/666?text=${encodeURIComponent(item.name)}" alt="${item.name}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;">
+                            </div>
+                            <div class="cart-item-info">
+                                <h3 class="cart-item-name">${item.name}</h3>
+                                <p class="cart-item-price">€${item.price.toFixed(2)}</p>
+                                <div class="quantity-control">
+                                    <button class="quantity-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
+                                    <span>${item.quantity}</span>
+                                    <button class="quantity-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+                                    <button class="remove-item" onclick="removeFromCart(${item.id})">Remove</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="cart-total">
+                    <div class="total-label">Total</div>
+                    <div class="total-amount">€${total.toFixed(2)}</div>
+                    <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+                </div>
+            `;
+        }
+
+        // Update quantity
+        function updateQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            if (!item) return;
+
+            item.quantity += change;
+            if (item.quantity <= 0) {
+                removeFromCart(productId);
+            } else {
+                saveCart();
+                renderCart();
+                updateCartCount();
+            }
+        }
+
+        // Remove from cart
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            saveCart();
+            renderCart();
+            updateCartCount();
+        }
+
+        // Checkout (placeholder)
+        function checkout() {
+            alert('Stripe checkout integration will be implemented here. Total: €' + 
+                cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2));
+        }
+
+        // Update cart count
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
+            document.getElementById('cartCount').style.display = count > 0 ? 'flex' : 'none';
+        }
+
+        // Save cart to localStorage
+        function saveCart() {
+            // Note: localStorage won't work in this preview, but will work when deployed
+            try {
+                localStorage.setItem('cart', JSON.stringify(cart));
+            } catch(e) {
+                // Silent fail for preview
+            }
+        }
+
+        // Load cart from localStorage
+        function loadCart() {
+            try {
+                const saved = localStorage.getItem('cart');
+                if (saved) {
+                    cart = JSON.parse(saved);
+                }
+            } catch(e) {
+                // Silent fail for preview
+            }
+        }
+
+        // Navigation functions
+        function hideAllPages() {
+            document.getElementById('mainPage').style.display = 'none';
+            document.getElementById('productDetail').classList.remove('active');
+            document.getElementById('cartPage').classList.remove('active');
+            document.getElementById('aboutPage').classList.remove('active');
+            document.getElementById('contactPage').classList.remove('active');
+        }
+
+        function showMainPage() {
+            hideAllPages();
+            document.getElementById('mainPage').style.display = 'grid';
+            currentPage = 'main';
+        }
+
+        function showPage(page) {
+            hideAllPages();
+            if (page === 'about') {
+                document.getElementById('aboutPage').classList.add('active');
+            } else if (page === 'contact') {
+                document.getElementById('contactPage').classList.add('active');
+            }
+            currentPage = page;
+        }
+    </script>
+</body>
+</html>
