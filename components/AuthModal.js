@@ -127,7 +127,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
         <div className="auth-switch">
           {mode === 'login' ? (
             <p>
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <button 
                 type="button"
                 className="switch-btn" 
