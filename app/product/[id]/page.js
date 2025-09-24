@@ -5,12 +5,15 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import products from '../../../data/products.json';
+import FavoriteButton from '../../../components/FavoriteButton';
+import AuthModal from '../../../components/AuthModal';
 
 export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
   const [product, setProduct] = useState(null);
   const [buttonText, setButtonText] = useState('Add to Cart');
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   useEffect(() => {
     const productId = parseInt(params.id);
@@ -62,31 +65,42 @@ export default function ProductDetailPage() {
   }
 
   return (
-    <div className="container">
-      <Link href="/" className="back-button">
-        ← Back to products
-      </Link>
-      
-      <div className="detail-content">
-        <div className="detail-image">
-          <Image
-            src={product.image}
-            alt={product.name}
-            width={600}
-            height={600}
-            style={{ objectFit: 'cover' }}
-          />
-        </div>
+    <>
+      <div className="container">
+        <Link href="/" className="back-button">
+          ← Back to products
+        </Link>
         
-        <div className="detail-info">
-          <h1 className="detail-title">{product.name}</h1>
-          <p className="detail-price">€{product.price.toFixed(2)}</p>
-          <p className="detail-description">{product.description}</p>
-          <button className="add-to-cart" onClick={addToCart}>
-            {buttonText}
-          </button>
+        <div className="detail-content">
+          <div className="detail-image">
+            <Image
+              src={product.image}
+              alt={product.name}
+              width={600}
+              height={600}
+              style={{ objectFit: 'cover' }}
+            />
+            <FavoriteButton 
+              productId={product.id}
+              onAuthRequired={() => setIsAuthModalOpen(true)}
+            />
+          </div>
+          
+          <div className="detail-info">
+            <h1 className="detail-title">{product.name}</h1>
+            <p className="detail-price">€{product.price.toFixed(2)}</p>
+            <p className="detail-description">{product.description}</p>
+            <button className="add-to-cart" onClick={addToCart} style={{ backgroundColor: buttonText === 'Added!' ? 'green' : ''}}>
+              {buttonText}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+
+      <AuthModal 
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+      />
+    </>
   );
 }
