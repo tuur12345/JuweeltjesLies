@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../contexts/AuthContext';
@@ -12,6 +12,7 @@ export default function SuccessPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, loading: authLoading } = useAuth();
+  const processedRef = useRef(false);
 
   useEffect(() => {
     const sessionId = searchParams.get('session_id');
@@ -22,15 +23,11 @@ export default function SuccessPage() {
       return;
     }
 
-    if (!authLoading) {
-      if (!user) {
-        setError('You must be logged in to view this page');
-        setLoading(false);
-        return;
-      }
+    if (!authLoading && user && !processedRef.current) {
+      processedRef.current = true; // prevent reprocessing
       processSuccessfulPayment(sessionId);
     }
-  }, [searchParams, user, authLoading, router]);
+  }, [searchParams, user, authLoading]);
 
 
   const processSuccessfulPayment = async (sessionId) => {
