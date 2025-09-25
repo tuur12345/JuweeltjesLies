@@ -74,7 +74,7 @@ export default function ProductDetailPage() {
         <div className="detail-content">
           <div className="detail-image">
             <Image
-              src={`https://via.placeholder.com/600x600/f5f5f5/666?text=${encodeURIComponent(product.name)}`}
+              src={product.image}
               alt={product.name}
               width={600}
               height={600}

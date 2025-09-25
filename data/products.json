@@ -2,56 +2,56 @@
   {
     "id": 1,
     "name": "Elegant Pearl Necklace",
-    "price": 189.99,
+    "price": 19.99,
     "description": "A timeless piece featuring freshwater pearls on a delicate silver chain. Perfect for special occasions or adding elegance to your everyday look.",
     "image": "/images/1.jpg"
 },
   {
     "id": 2,
     "name": "Rose Gold Ring",
-    "price": 249.99,
+    "price": 29.99,
     "description": "Handcrafted rose gold ring with intricate detailing. A modern take on classic jewelry design that complements any style.",
     "image": "/images/2.jpg"
   },
   {
     "id": 3,
     "name": "Diamond Stud Earrings",
-    "price": 399.99,
+    "price": 39.99,
     "description": "Classic diamond studs set in white gold. These versatile earrings are perfect for both casual and formal occasions.",
     "image": "/images/3.jpg"
   },
   {
     "id": 4,
     "name": "Vintage Brooch",
-    "price": 129.99,
+    "price": 19.99,
     "description": "Art deco inspired brooch with colored gemstones. Add a touch of vintage glamour to any outfit.",
     "image": "/images/4.jpg"
   },
   {
     "id": 5,
     "name": "Silver Charm Bracelet",
-    "price": 159.99,
+    "price": 19.99,
     "description": "Customizable silver bracelet with unique charms. Create your own story with our selection of meaningful charms.",
     "image": "/images/5.jpg"
   },
   {
     "id": 6,
     "name": "Amethyst Pendant",
-    "price": 179.99,
+    "price": 19.99,
     "description": "Natural amethyst crystal pendant on a sterling silver chain. Known for its calming properties and stunning purple hue.",
     "image": "/images/6.jpg"
   },
   {
     "id": 7,
     "name": "Gold Hoop Earrings",
-    "price": 199.99,
+    "price": 19.99,
     "description": "Classic gold hoops with a modern twist. Lightweight and comfortable for all-day wear.",
     "image": "/images/7.jpg"
   },
   {
     "id": 8,
     "name": "Sapphire Ring Set",
-    "price": 459.99,
+    "price": 0.51,
     "description": "Stunning sapphire centerpiece surrounded by smaller diamonds. A perfect engagement or anniversary gift.",
     "image": "/images/8.jpg"
   }

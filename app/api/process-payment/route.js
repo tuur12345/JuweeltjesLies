@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { stripe } from '../../../lib/stripeClient'
-import { supabase } from '../../../lib/supabaseClient'
-
+import { supabaseAdmin } from '../../../lib/supabaseClient'
 export async function POST(request) {
   try {
     const { sessionId } = await request.json()
@@ -29,7 +28,7 @@ export async function POST(request) {
     const lineItems = await stripe.checkout.sessions.listLineItems(sessionId)
 
     // Find user by email
-    const { data: { user }, error: userError } = await supabase.auth.admin.listUsers()
+    /*const { data: { user }, error: userError } = await supabase.auth.admin.listUsers()
     const foundUser = user?.find(u => u.email === session.customer_email || u.email === session.metadata?.user_email)
 
     if (!foundUser) {
@@ -37,7 +36,21 @@ export async function POST(request) {
         { error: 'User not found' },
         { status: 404 }
       )
+    }*/
+const { data, error: userError } = await supabaseAdmin.auth.admin.listUsers()
+    if (userError) {
+      console.error('Supabase error listing users:', userError)
+      return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 })
     }
+
+    const userEmail = session.customer_email || session.metadata?.user_email
+    const foundUser = data.users.find(u => u.email === userEmail)  // note data.users
+
+
+    if (!foundUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    }
+
 
     // Prepare order data
     const orderItems = lineItems.data.map(item => ({
@@ -49,7 +62,7 @@ export async function POST(request) {
     const totalAmount = (session.amount_total / 100).toFixed(2) // Convert from cents
 
     // Create order in Supabase
-    const { data: order, error: orderError } = await supabase
+    const { data: order, error: orderError } = await supabaseAdmin
       .from('orders')
       .insert({
         user_id: foundUser.id,

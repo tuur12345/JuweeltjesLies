@@ -1,4 +1,5 @@
 'use client';
+export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -11,7 +12,7 @@ export default function SuccessPage() {
   const [error, setError] = useState(null);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
     const sessionId = searchParams.get('session_id');
@@ -22,14 +23,14 @@ export default function SuccessPage() {
       return;
     }
 
-    if (!user) {
-      // If no user, redirect to home
-      router.push('/');
-      return;
-    }
-
-    // Process the successful payment
+    if (!authLoading) {
+      if (!user) {
+        setError('You must be logged in to view this page');
+        setLoading(false);
+        return;
+      }
     processSuccessfulPayment(sessionId);
+  }
   }, [searchParams, user, router]);
 
   const processSuccessfulPayment = async (sessionId) => {
@@ -44,7 +45,7 @@ export default function SuccessPage() {
       });
 
       const data = await response.json();
-
+      console.log('Process payment response:', response.status, data)
       if (!response.ok) {
         throw new Error(data.error || 'Failed to process payment');
       }
