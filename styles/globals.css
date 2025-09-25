@@ -1042,6 +1042,23 @@ body {
   margin-bottom: 1.5rem;
 }
 
+.admin-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  transition: color 0.3s ease;
+}
+
+.admin-icon:hover {
+  color: var(--accent);
+}
+
+
 @media (max-width: 768px) {
   .detail-content {
     grid-template-columns: 1fr;
@@ -1056,8 +1073,12 @@ body {
   .header-content {
     padding: 1rem;
   }
+  .header-actions {
+    display: block;
+  }
 
   .logo {
     font-size: 1.2rem;
   }
+  
 }

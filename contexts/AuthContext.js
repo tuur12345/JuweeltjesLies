@@ -18,13 +18,20 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
-    getSession();
+    const initUser = async () => {
+      setLoading(true);
+      const currentUser = await getCurrentUser();
+      setUser(currentUser);
+      setLoading(false);
+    };
+
+    initUser();
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        setUser(session?.user || null);
+        const currentUser = await getCurrentUser();
+        setUser(currentUser);
         setLoading(false);
       }
     );
@@ -32,7 +39,22 @@ export const AuthProvider = ({ children }) => {
     return () => subscription?.unsubscribe();
   }, []);
 
-  const getSession = async () => {
+  const getCurrentUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+
+    // fetch extra profile info including is_admin
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', user.id)
+      .single();
+
+    console.log('profile fetch:', profile, error);
+    return { ...user, is_admin: profile?.is_admin || false };
+  };
+
+  /*const getSession = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user || null);
@@ -41,7 +63,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  };*/
 
   const value = {
     user,

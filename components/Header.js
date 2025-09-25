@@ -101,6 +101,21 @@ export default function Header() {
           </Link>
           
           <div className="header-actions">
+              {user?.is_admin && (
+              <button 
+                className="admin-icon" 
+                onClick={() => router.push('/admin')}
+                title="Admin Dashboard"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 2L2 7h20L12 2z"/>       {/* top triangle, like a shield */}
+                  <path d="M2 7v10h20V7"/>             {/* rectangle body */}
+                  <path d="M2 17h20"/>                 {/* bottom line */}
+                </svg>
+              </button>
+            )}
+
+
             <button 
               className="favorites-icon" 
               onClick={() => router.push('/favorites')}

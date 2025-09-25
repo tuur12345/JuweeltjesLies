@@ -1,10 +1,15 @@
-import ProductGrid from '../components/ProductGrid'
-import products from '../data/products.json'
+import ProductGrid from '../components/ProductGrid';
+import { supabase } from '../lib/supabaseClient';
 
-export default function HomePage() {
+export default async function HomePage() {
+  const { data, error } = await supabase.from('products').select('*');
+  console.log('Products fetched:', data, error);
+
+  if (error) return <p>Error loading products</p>;
+
   return (
     <div className="container">
-      <ProductGrid products={products} />
+      <ProductGrid products={data} />
     </div>
-  )
+  );
 }
