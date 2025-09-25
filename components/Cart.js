@@ -6,11 +6,16 @@ import Image from 'next/image';
 import { useAuth } from '../contexts/AuthContext';
 import ShippingForm from './ShippingForm';
 import AuthModal from './AuthModal';
+import { loadStripe } from '@stripe/stripe-js';
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+
 
 export default function Cart() {
   const [cart, setCart] = useState([]);
   const [showShippingForm, setShowShippingForm] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const router = useRouter();
 
@@ -66,14 +71,42 @@ export default function Cart() {
     setShowShippingForm(true);
   };
 
-  const handleShippingSubmit = (shippingData) => {
-    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    alert(`Order placed! Shipping to: ${shippingData.full_name}, ${shippingData.address_line_1}. Total: €${total.toFixed(2)}`);
+  const handleShippingSubmit = async (shippingData) => {
+    setLoading(true);
     
-    // Clear cart after successful order
-    setCart([]);
-    saveCart([]);
-    setShowShippingForm(false);
+    try {
+      // Create Stripe checkout session
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          cartItems: cart,
+          userEmail: user.email,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create checkout session');
+      }
+
+     // Redirect to Stripe Checkout
+    const stripe = await stripePromise;
+    const { error: stripeError } = await stripe.redirectToCheckout({
+      sessionId: data.sessionId
+    });
+    if (stripeError) console.error(stripeError);
+
+      
+    } catch (error) {
+      console.error('Checkout error:', error);
+      alert('Failed to process checkout. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleShippingCancel = () => {
@@ -122,7 +155,7 @@ export default function Cart() {
             <div key={item.id} className="cart-item">
               <div className="cart-item-image">
                 <Image
-                  src={"/images/1.jpg"}
+                  src={item.image}
                   alt={item.name}
                   width={100}
                   height={100}

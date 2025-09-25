@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { profiles } from '../lib/supabaseClient';
 
+
 export default function ShippingForm({ onSubmit, onCancel }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -230,7 +231,7 @@ export default function ShippingForm({ onSubmit, onCancel }) {
             className="submit-btn"
             disabled={loading}
           >
-            {loading ? 'Saving...' : 'Continue to Payment'}
+            {loading ? 'Processing...' : 'Proceed to Payment'}
           </button>
         </div>
       </form>

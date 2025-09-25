@@ -74,7 +74,7 @@ export default function ProductDetailPage() {
         <div className="detail-content">
           <div className="detail-image">
             <Image
-              src={product.image}
+              src={`https://via.placeholder.com/600x600/f5f5f5/666?text=${encodeURIComponent(product.name)}`}
               alt={product.name}
               width={600}
               height={600}
@@ -90,7 +90,7 @@ export default function ProductDetailPage() {
             <h1 className="detail-title">{product.name}</h1>
             <p className="detail-price">€{product.price.toFixed(2)}</p>
             <p className="detail-description">{product.description}</p>
-            <button className="add-to-cart" onClick={addToCart} style={{ backgroundColor: buttonText === 'Added!' ? 'green' : ''}}>
+            <button className="add-to-cart" onClick={addToCart}>
               {buttonText}
             </button>
           </div>
