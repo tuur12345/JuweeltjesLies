@@ -96,9 +96,11 @@ export default function Header() {
             <span></span>
           </button>
           
-          <Link href="/" className="logo">
-            Juweeltjes Lies
+          <Link href={"/"} className="logo">
+            <img src="/images/logo.png" className='logo-image'></img>
           </Link>
+          
+          
           
           <div className="header-actions">
               {user?.is_admin && (

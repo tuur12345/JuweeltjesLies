@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import products from '../../../data/products.json';
+import { supabase } from '../../../lib/supabaseClient';
 import FavoriteButton from '../../../components/FavoriteButton';
 import AuthModal from '../../../components/AuthModal';
 
@@ -16,16 +16,25 @@ export default function ProductDetailPage() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   useEffect(() => {
-    const productId = parseInt(params.id);
-    const foundProduct = products.find(p => p.id === productId);
-    
-    if (!foundProduct) {
-      router.push('/');
-      return;
-    }
-    
-    setProduct(foundProduct);
+    const fetchProduct = async () => {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('id', params.id)
+        .single();
+
+      if (error || !data) {
+        router.push('/');
+        return;
+      }
+
+      setProduct(data);
+    };
+
+    if (params.id) fetchProduct();
   }, [params.id, router]);
+
+  const [added, setAdded] = useState(false);
 
   const addToCart = () => {
     if (!product) return;
@@ -46,15 +55,15 @@ export default function ProductDetailPage() {
       }
 
       localStorage.setItem('cart', JSON.stringify(newCart));
-      
-      // Dispatch custom event for cart updates
       window.dispatchEvent(new Event('cartUpdated'));
 
-      // Show feedback
+      setAdded(true);
       setButtonText('Added!');
       setTimeout(() => {
-        setButtonText('Add to Cart');
-      }, 1500);
+          setButtonText('Add to Cart');
+          setAdded(false);
+        }, 1500
+      );
     } catch (e) {
       console.error('Failed to add to cart');
     }
@@ -68,7 +77,8 @@ export default function ProductDetailPage() {
     <>
       <div className="container">
         <Link href="/" className="back-button">
-          ← Back to products
+          <svg fill="#000000" width="10px" height="10px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M222.927 580.115l301.354 328.512c24.354 28.708 20.825 71.724-7.883 96.078s-71.724 20.825-96.078-7.883L19.576 559.963a67.846 67.846 0 01-13.784-20.022 68.03 68.03 0 01-5.977-29.488l.001-.063a68.343 68.343 0 017.265-29.134 68.28 68.28 0 011.384-2.6 67.59 67.59 0 0110.102-13.687L429.966 21.113c25.592-27.611 68.721-29.247 96.331-3.656s29.247 68.721 3.656 96.331L224.088 443.784h730.46c37.647 0 68.166 30.519 68.166 68.166s-30.519 68.166-68.166 68.166H222.927z"/>
+          </svg> Back to products
         </Link>
         
         <div className="detail-content">
@@ -90,7 +100,10 @@ export default function ProductDetailPage() {
             <h1 className="detail-title">{product.name}</h1>
             <p className="detail-price">€{product.price.toFixed(2)}</p>
             <p className="detail-description">{product.description}</p>
-            <button className="add-to-cart" onClick={addToCart}>
+            <button 
+              className={`add-to-cart ${added ? 'added' : ''}`} 
+              onClick={addToCart}
+            >
               {buttonText}
             </button>
           </div>

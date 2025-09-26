@@ -1,3 +1,5 @@
+export const revalidate = 10; // re-fetch every 10 seconds
+
 import ProductGrid from '../components/ProductGrid';
 import { supabase } from '../lib/supabaseClient';
 
