@@ -27,6 +27,7 @@ body {
   max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
+
 }
 
 /* generic buttons */
@@ -148,6 +149,8 @@ button {
   font-size: 11px;
   font-weight: bold;
 }
+
+.empty-cart { text-align: center; padding: 4rem 2rem; color: var(--text-light); }
 
 /* account dropdown */
 .account-wrapper { position: relative; }
