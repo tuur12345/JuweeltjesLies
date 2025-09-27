@@ -3,7 +3,7 @@ import { supabaseAdmin } from '../../../../lib/supabaseClient';
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { name, price, text, image } = body;
+    const { name, price, description, image } = body;
 
     if (!name || !price || !image) {
       return new Response(JSON.stringify({ error: 'Missing fields' }), { status: 400 });
@@ -11,7 +11,7 @@ export async function POST(req) {
 
     const { data, error } = await supabaseAdmin
       .from('products')
-      .insert([{ name, price, text, image }])
+      .insert([{ name, price, description, image }])
       .select()
       .single();
 

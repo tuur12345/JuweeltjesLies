@@ -9,6 +9,7 @@ export default function AdminPage() {
   const router = useRouter();
 
   const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [imageFile, setImageFile] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -56,7 +57,7 @@ export default function AdminPage() {
       const resProduct = await fetch('/api/admin/add-product', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, price: parseFloat(price), text: name, image: publicUrl })
+        body: JSON.stringify({ name, price: parseFloat(price), description: description, image: publicUrl })
       });
 
       const productResult = await resProduct.json();
@@ -64,6 +65,7 @@ export default function AdminPage() {
 
       setMessage('Product uploaded successfully!');
       setName('');
+      setDescription('');
       setPrice('');
       setImageFile(null);
 
@@ -81,6 +83,7 @@ export default function AdminPage() {
 
       <form onSubmit={handleUpload}>
         <input type="text" placeholder="Product name" value={name} onChange={e => setName(e.target.value)} />
+        <input type="text" placeholder="Product description" value={description} onChange={e => setDescription(e.target.value)} />
         <input type="number" step="0.01" placeholder="Price" value={price} onChange={e => setPrice(e.target.value)} />
         <input type="file" accept="image/*" onChange={e => setImageFile(e.target.files[0])} />
         <button type="submit" disabled={uploading}>{uploading ? 'Uploading...' : 'Upload Product'}</button>
