@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabaseClient';
 
 export default async function HomePage() {
   const { data, error } = await supabase.from('products').select('*');
-  console.log('Products fetched:', data, error);
+  //console.log('Products fetched:', data, error);
 
   if (error) return <p>Error loading products</p>;
 

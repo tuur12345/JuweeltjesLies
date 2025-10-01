@@ -3,85 +3,62 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import Link from 'next/link';
+
 import { useAuth } from '../../contexts/AuthContext';
 import { favorites } from '../../lib/supabaseClient';
-import products from '../../data/products.json';
 import FavoriteButton from '../../components/FavoriteButton';
+import AuthModal from '../../components/AuthModal';
+import { supabase } from '../../lib/supabaseClient';
+
 
 export default function FavoritesPage() {
   const [favoriteProducts, setFavoriteProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
   const { user } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!user) {
-      router.push('/');
-      return;
-    }
+  if (user) {
     loadFavorites();
-  }, [user, router]);
+  } else {
+    setAuthModalOpen(true);
+  }
+  }, [user]);
+
 
   const loadFavorites = async () => {
-    if (!user) return;
+  if (!user) return;
 
-    try {
-      const { data: favoriteIds } = await favorites.getUserFavorites(user.id);
-      const favoriteProducts = products.filter(product => 
-        favoriteIds.includes(product.id)
-      );
-      setFavoriteProducts(favoriteProducts);
-    } catch (error) {
-      console.error('Error loading favorites:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    const { data: favoriteIds } = await favorites.getUserFavorites(user.id);
 
-  const handleProductClick = (productId) => {
-    router.push(`/product/${productId}`);
-  };
+    let { data: dbProducts, error } = await supabase
+      .from('products')
+      .select('*')
+      .in('id', favoriteIds);
 
-  const handleFavoriteRemoved = () => {
-    // Reload favorites when a product is unfavorited
-    loadFavorites();
-  };
+    if (error) throw error;
 
-  if (loading) {
-    return (
-      <div className="container">
-        <div className="loading-state">Loading your favorites...</div>
-      </div>
-    );
+    setFavoriteProducts(dbProducts || []);
+  } catch (error) {
+    console.error('Error loading favorites:', error);
+  } finally {
+    setLoading(false);
   }
+};
 
-  if (favoriteProducts.length === 0) {
-    return (
-      <div className="container">
-        <h1 className="page-title">My Favorites</h1>
-        <div className="empty-favorites">
-          <h3>No favorites yet</h3>
-          <p>Start browsing and save your favorite pieces!</p>
-          <br />
-          <Link href="/" className="add-to-cart">
-            Browse Products
-          </Link>
-        </div>
-      </div>
-    );
-  }
+
+  const handleAuthRequired = () => {
+    setAuthModalOpen(true);
+  };
 
   return (
     <div className="container">
       <h1 className="page-title">My Favorites</h1>
       <div className="product-grid">
         {favoriteProducts.map(product => (
-          <div 
-            key={product.id}
-            className="product-card" 
-            onClick={() => handleProductClick(product.id)}
-          >
+          <div key={product.id} className="product-card">
             <div className="product-image">
               <Image
                 src={product.image}
@@ -90,10 +67,9 @@ export default function FavoritesPage() {
                 height={400}
                 style={{ objectFit: 'cover' }}
               />
-              <FavoriteButton 
+              <FavoriteButton
                 productId={product.id}
-                onAuthRequired={() => {}}
-                key={`favorite-${product.id}`}
+                onAuthRequired={handleAuthRequired}
               />
             </div>
             <div className="product-info">
@@ -103,6 +79,11 @@ export default function FavoritesPage() {
           </div>
         ))}
       </div>
+
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+      />
     </div>
   );
 }

@@ -10,10 +10,13 @@ export default function FavoriteButton({ productId, onAuthRequired }) {
   const { user } = useAuth();
 
   useEffect(() => {
-    if (user) {
-      checkFavoriteStatus();
-    }
-  }, [user, productId]);
+  if (!user) {
+    setIsFavorite(false);
+  } else {
+    checkFavoriteStatus();
+  }
+}, [user, productId]);
+
 
   const checkFavoriteStatus = async () => {
     if (!user) return;
