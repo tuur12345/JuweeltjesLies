@@ -48,9 +48,12 @@ export default function FavoritesPage() {
   }
 };
 
-
   const handleAuthRequired = () => {
     setAuthModalOpen(true);
+  };
+
+  const handleProductClick = (productId) => {
+    router.push(`/product/${productId}`);
   };
 
   return (
@@ -58,7 +61,11 @@ export default function FavoritesPage() {
       <h1 className="page-title">My Favorites</h1>
       <div className="product-grid">
         {favoriteProducts.map(product => (
-          <div key={product.id} className="product-card">
+          <div 
+            key={product.id} 
+            className="product-card"
+            onClick={() => handleProductClick(product.id)}
+          >
             <div className="product-image">
               <Image
                 src={product.image}
