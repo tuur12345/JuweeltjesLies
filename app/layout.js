@@ -1,6 +1,7 @@
 import Header from '../components/Header'
 import { AuthProvider } from '../contexts/AuthContext'
 import '../styles/globals.css'
+import { Analytics } from "@vercel/analytics/next"
 
 export const metadata = {
   title: 'Juweeltjes Lies - Modern Jewelry Store',
@@ -15,6 +16,7 @@ export default function RootLayout({ children }) {
           <Header />
           <main>
             {children}
+            <Analytics/>
           </main>
         </AuthProvider>
       </body>
