@@ -8,7 +8,8 @@
 :root {
   --primary: #1a1a1a;
   --secondary: #f5f5f5;
-  --accent: #d4af37;
+  --accent: #FEB0C3;
+  --darkAccent: #b44a65;
   --text-light: #666;
   --border: #e5e5e5;
   --shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -209,7 +210,6 @@ button {
   z-index: 200;
 }
 .side-menu.active { left: 0; }
-.menu-header { padding: 2rem; border-bottom: 1px solid var(--border); }
 .menu-nav { padding: 2rem; }
 .menu-nav a {
   display: block;
@@ -303,9 +303,9 @@ button {
 .total-label { font-size: 1.2rem; margin-bottom: 1rem; }
 .total-amount { font-size: 2rem; font-weight: 300; margin-bottom: 2rem; }
 .checkout-btn {
-  background: var(--accent); color: white; border: none; padding: 1rem 3rem; font-size: 1rem; cursor: pointer; border-radius: 4px;
+  background:var(--accent); color:var(--darkAccent); padding: 1rem 3rem; font-size: 1rem; cursor: pointer; border-radius: 4px; border-color:var(--accent); border-style:solid;
 }
-.checkout-btn:hover { background: #b8941f; transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+.checkout-btn:hover { background:white; color:#df748e; transform: translateY(-2px); box-shadow: var(--shadow-hover); }
 
 /* ---------- Forms / shipping ---------- */
 .shipping-form-container h3 { font-size: 1.5rem; font-weight: 300; margin-bottom: 2rem; letter-spacing: 1px; }
@@ -315,9 +315,9 @@ button {
 .cancel-btn { background: none; border: 1px solid var(--border); color: var(--text-light); padding: 0.75rem 2rem; border-radius: 4px; cursor: pointer; }
 .cancel-btn:hover:not(:disabled) { background: var(--secondary); border-color: var(--text-light); }
 .submit-btn {
-  background: var(--accent); color: white; border: none; padding: 0.75rem 2rem; border-radius: 4px; cursor: pointer;
+  background:var(--accent); color:var(--darkAccent); padding: 0.75rem 2rem; border-radius: 4px; cursor: pointer; border-color:var(--accent); border-style:solid;
 }
-.submit-btn:hover:not(:disabled) { background: #b8941f; transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+.submit-btn:hover:not(:disabled) { background:white; color:#df748e; transform: translateY(-2px); box-shadow: var(--shadow-hover); }
 .submit-btn:disabled, .cancel-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
 /* ---------- Auth modal & forms ---------- */
@@ -394,6 +394,72 @@ button {
 /* ---------- Utilities & small pages ---------- */
 .page-title { font-size: 2.5rem; font-weight: 300; margin-bottom: 2rem; letter-spacing: 1px; }
 .page-text { color: var(--text-light); line-height: 1.8; margin-bottom: 1.5rem; }
+
+/* feedback */
+.feedback-form-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+}
+
+.feedback-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  outline: none;
+}
+
+textarea:focus {
+  border-color: #0070f3;
+}
+
+.error {
+  color: red;
+  margin-top: 0.5rem;
+}
+
+.success {
+  color: green;
+  margin-top: 0.5rem;
+}
+
+/* admin page */
+.admin-sections {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+.admin-panel {
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 1rem;
+  background: #f9f9f9;
+}
+
+.admin-panel ul {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0 0;
+}
+.admin-panel li {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+
 
 /* ---------- Responsive (merged) ---------- */
 @media (max-width: 768px) {

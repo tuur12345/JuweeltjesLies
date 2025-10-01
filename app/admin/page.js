@@ -3,6 +3,7 @@
 import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function AdminPage() {
   const { user, loading } = useAuth();
@@ -15,9 +16,37 @@ export default function AdminPage() {
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState('');
 
+  const [orders, setOrders] = useState([]);
+  const [feedback, setFeedback] = useState([]);
+
   useEffect(() => {
     if (!loading && (!user || !user.is_admin)) router.push('/');
   }, [user, loading, router]);
+
+  useEffect(() => {
+    if (user?.is_admin) {
+      loadOrders();
+      loadFeedback();
+    }
+  }, [user]);
+
+  const loadOrders = async () => {
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (!error) setOrders(data);
+    else console.error(error);
+  };
+
+  const loadFeedback = async () => {
+    const { data, error } = await supabase
+      .from('feedback')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (!error) setFeedback(data);
+    else console.error(error);
+  };
 
   if (loading) return <p>Loading...</p>;
   if (!user || !user.is_admin) return null;
@@ -33,7 +62,6 @@ export default function AdminPage() {
     setMessage('');
 
     try {
-      // Convert file to Base64
       const base64 = await new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(imageFile);
@@ -43,7 +71,6 @@ export default function AdminPage() {
 
       const fileName = `${Date.now()}-${imageFile.name}`;
 
-      // Upload image
       const resImage = await fetch('/api/admin/upload-image', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -53,11 +80,10 @@ export default function AdminPage() {
       const { publicUrl, error: uploadError } = await resImage.json();
       if (uploadError) throw new Error(uploadError);
 
-      // Insert product
       const resProduct = await fetch('/api/admin/add-product', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, price: parseFloat(price), description: description, image: publicUrl })
+        body: JSON.stringify({ name, price: parseFloat(price), description, image: publicUrl })
       });
 
       const productResult = await resProduct.json();
@@ -78,10 +104,10 @@ export default function AdminPage() {
   };
 
   return (
-    <div>
+    <div className="admin-page">
       <h1>Admin Dashboard</h1>
 
-      <form onSubmit={handleUpload}>
+      <form onSubmit={handleUpload} className="upload-form">
         <input type="text" placeholder="Product name" value={name} onChange={e => setName(e.target.value)} />
         <input type="text" placeholder="Product description" value={description} onChange={e => setDescription(e.target.value)} />
         <input type="number" step="0.01" placeholder="Price" value={price} onChange={e => setPrice(e.target.value)} />
@@ -90,6 +116,80 @@ export default function AdminPage() {
       </form>
 
       {message && <p>{message}</p>}
+
+      <div className="admin-sections">
+        <div className="admin-panel">
+          <h2>Orders</h2>
+            {orders.length === 0 ? <p>No orders yet</p> : (
+            <ul>
+              {orders.map(order => (
+              <li key={order.id}>
+                <strong>ID:</strong> {order.id} <br />
+                <strong>User:</strong> {order.user_id} <br /> 
+                <strong>Status:</strong> {order.status} <br />
+                <strong>Total:</strong> €{order.total_amount} <br /> 
+                <strong>Date:</strong> {new Date(order.created_at).toLocaleString()} <br />
+
+                {order.shipping_address && (() => {
+                  let addr;
+                  try {
+                    addr = typeof order.shipping_address === 'string' 
+                      ? JSON.parse(order.shipping_address) 
+                      : order.shipping_address;
+                  } catch {
+                    addr = order.shipping_address;
+                  }
+
+                  return (
+                    <div>
+                      <strong>Shipping:</strong> {addr.name}, {addr.phone || '-'}, {addr.address.line1}, {addr.address.line2 || ''} {addr.address.city}, {addr.address.state || ''}, {addr.address.postal_code}, {addr.address.country} <br />
+                      <strong>Carrier:</strong> {addr.carrier || '-'} | <strong>Tracking:</strong> {addr.tracking_number || '-'}
+                    </div>
+                  );
+                })()}
+
+                {order.order_items && (() => {
+                  let items;
+                  try {
+                    items = typeof order.order_items === 'string' 
+                      ? JSON.parse(order.order_items) 
+                      : order.order_items;
+                  } catch {
+                    items = order.order_items;
+                  }
+
+                  return (
+                    <div>
+                      <strong>Items:</strong>
+                      <ul>
+                        {items.map((item, idx) => (
+                          <li key={idx}>
+                            {item.name} × {item.quantity} — €{item.price}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  );
+                })()}
+              </li>
+              ))}
+            </ul>
+            )}
+        </div>
+
+        <div className="admin-panel">
+          <h2>Feedback</h2>
+            {feedback.length === 0 ? <p>No feedback yet</p> : (
+            <ul>
+              {feedback.map(fb => (
+                <li key={fb.id}>
+                  <strong>{new Date(fb.created_at).toLocaleString()}</strong> — {fb.message}
+                </li>
+              ))}
+            </ul>
+            )}
+        </div>
+      </div>
     </div>
   );
 }

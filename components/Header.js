@@ -166,12 +166,10 @@ export default function Header() {
 
       {/* Side Menu */}
       <div className={`side-menu ${isMenuOpen ? 'active' : ''}`}>
-        <div className="menu-header">
-          <h3>Menu</h3>
-        </div>
         <nav className="menu-nav">
-          <Link href="/about" onClick={closeMenu}>About Me</Link>
-          <Link href="/contact" onClick={closeMenu}>Contact Me</Link>
+          <Link href="/about" onClick={closeMenu}>Over Mij</Link>
+          <Link href="/contact" onClick={closeMenu}>Contacteer Mij</Link>
+          <Link href="/feedback" onClick={closeMenu}>Geef feedback</Link>
         </nav>
       </div>
 

@@ -1,7 +1,7 @@
 export default function AboutPage() {
   return (
     <div className="container">
-      <h1 className="page-title">About Me</h1>
+      <h1 className="page-title">Over Mij</h1>
       <p className="page-text">
         Welcome to Juweeltjes Lies! I&apos;m Lies, a passionate jewelry designer dedicated to creating unique, 
         handcrafted pieces that tell a story. Each piece in my collection is carefully crafted with love 

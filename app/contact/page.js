@@ -1,7 +1,7 @@
 export default function ContactPage() {
   return (
     <div className="container">
-      <h1 className="page-title">Contact Me</h1>
+      <h1 className="page-title">Contacteer Mi</h1>
       <p className="page-text">
         I&apos;d love to hear from you! Whether you have questions about a piece, want to discuss a custom order, 
         or just want to say hello, feel free to reach out.
