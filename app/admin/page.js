@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
+import OrderRow from '../../components/OrderRow';
 
 export default function AdminPage() {
   const { user, loading } = useAuth();
@@ -120,10 +121,10 @@ export default function AdminPage() {
       {message && <p>{message}</p>}
 
       <div className="admin-sections">
-        <div className="admin-panel">
+        <div className="admin-panel" onClick={() => setShowOrders(!showOrders)}>
           <div className="admin-panel-header">
             <h2>Orders</h2>
-            <button className="show-btn" onClick={() => setShowOrders(!showOrders)}>
+            <button className="show-btn" >
               {showOrders ? 'Hide Orders' : 'Show Orders'}
             </button>
           </div>
@@ -132,55 +133,7 @@ export default function AdminPage() {
               {orders.length === 0 ? <p>No orders yet</p> : (
                 <ul>
                   {orders.map(order => (
-                    <li key={order.id}>
-                      <strong>ID:</strong> {order.id} <br />
-                      <strong>User:</strong> {order.user_id} <br /> 
-                      <strong>Status:</strong> {order.status} <br />
-                      <strong>Total:</strong> €{order.total_amount} <br /> 
-                      <strong>Date:</strong> {new Date(order.created_at).toLocaleString()} <br />
-
-                      {order.shipping_address && (() => {
-                        let addr;
-                        try {
-                          addr = typeof order.shipping_address === 'string' 
-                            ? JSON.parse(order.shipping_address) 
-                            : order.shipping_address;
-                        } catch {
-                          addr = order.shipping_address;
-                        }
-
-                        return (
-                          <div>
-                            <strong>Shipping:</strong> {addr.name}, {addr.phone || '-'}, {addr.address.line1}, {addr.address.line2 || ''} {addr.address.city}, {addr.address.state || ''}, {addr.address.postal_code}, {addr.address.country} <br />
-                            <strong>Carrier:</strong> {addr.carrier || '-'} | <strong>Tracking:</strong> {addr.tracking_number || '-'}
-                          </div>
-                        );
-                      })()}
-
-                      {order.order_items && (() => {
-                        let items;
-                        try {
-                          items = typeof order.order_items === 'string' 
-                            ? JSON.parse(order.order_items) 
-                            : order.order_items;
-                        } catch {
-                          items = order.order_items;
-                        }
-
-                        return (
-                          <div>
-                            <strong>Items:</strong>
-                            <ul>
-                              {items.map((item, idx) => (
-                                <li key={idx}>
-                                  {item.name}: {item.quantity} x €{item.price} = {order.total_amount}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        );
-                      })()}
-                    </li>
+                    <OrderRow key={order.id} order={order} />
                   ))}
                 </ul>
               )}
@@ -188,10 +141,10 @@ export default function AdminPage() {
           )}
         </div>
 
-        <div className="admin-panel">
+        <div className="admin-panel" onClick={() => setShowFeedback(!showFeedback)}>
           <div className='admin-panel-header'>
             <h2>Feedback</h2>
-            <button onClick={() => setShowFeedback(!showFeedback)}>
+            <button className="show-btn">
               {showFeedback ? 'Hide Feedback' : 'Show Feedback'}
             </button>
           </div>

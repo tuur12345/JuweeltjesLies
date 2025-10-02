@@ -202,7 +202,7 @@ export default function ShippingForm({ onSubmit, onCancel }) {
           </div>
 
           <div className="form-group">
-            <label htmlFor="phone">Phone</label>
+            <label htmlFor="phone">Phone *</label>
             <input
               type="tel"
               id="phone"
@@ -210,7 +210,7 @@ export default function ShippingForm({ onSubmit, onCancel }) {
               value={formData.phone}
               onChange={handleInputChange}
               disabled={loading}
-              placeholder="Optional"
+              required
             />
           </div>
         </div>
