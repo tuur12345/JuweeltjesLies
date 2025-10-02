@@ -434,16 +434,19 @@ textarea:focus {
 
 /* admin page */
 .admin-sections {
-  display: flex;
-  gap: 2rem;
-  margin-top: 2rem;
+  margin: 2rem;
 }
 .admin-panel {
-  flex: 1;
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 1rem;
+  margin: 1rem;
   background: #f9f9f9;
+}
+
+.admin-panel-header {
+  display: flex;
+  justify-content: space-between;
 }
 
 .admin-panel ul {
